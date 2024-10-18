@@ -1,45 +1,35 @@
-name: Bandit Security Check 
+name: Bandit Security Check
 
- 
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - feature
+      
+  pull_request:
+    branches:
+      - main
+      - develop
+      - feature
 
-on: [push, pull_request] 
+jobs:
+  bandit:
+    runs-on: ubuntu-latest
 
- 
+    steps:
+      - uses: actions/checkout@v2
 
-jobs:   
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
 
-  bandit: 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install bandit
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    runs-on: ubuntu-latest 
-
-    steps: 
-
-      - uses: actions/checkout@v2 
-
- 
-
-      - name: Set up Python 
-
-        uses: actions/setup-python@v2 
-
-        with: 
-
-          python-version: 3.x 
-
- 
-
-      - name: Install dependencies 
-
-        run: |  
-
-          python -m pip install --upgrade pip 
-
-          pip install bandit 
-
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi 
-
- 
-
-      - name: Run Bandit 
-
-        run: bandit -r .  
+      - name: Run Bandit
+        run: bandit -r .
